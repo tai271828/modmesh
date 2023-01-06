@@ -29,6 +29,7 @@
 #include <modmesh/onedim/Euler1DCore.hpp>
 #include <modmesh/toggle/profile.hpp>
 #include <cmath>
+#include <easy/profiler.h>
 
 namespace modmesh
 {
@@ -118,6 +119,10 @@ void Euler1DCore::update_cfl(bool odd_plane)
 void Euler1DCore::march_half_so0(bool odd_plane)
 {
     MODMESH_TIME("Euler1DCore::march_half_so0");
+    EASY_FUNCTION(profiler::colors::Magenta);
+
+    EASY_BLOCK("Calculating march_half_so0");
+
     const int_type start = BOUND_COUNT - (odd_plane ? 1 : 0);
     const auto stop = static_cast<int_type>(ncoord() - BOUND_COUNT - (odd_plane ? 0 : 1));
     // Kernal at xneg solution element.
@@ -149,6 +154,8 @@ void Euler1DCore::march_half_so0(bool odd_plane)
         m_so0(ic + 1, 1) = (flux_ll[1] + flux_lr[1]) / dx;
         m_so0(ic + 1, 2) = (flux_ll[2] + flux_lr[2]) / dx;
     }
+
+    EASY_END_BLOCK;
 }
 
 void Euler1DCore::treat_boundary_so0()
